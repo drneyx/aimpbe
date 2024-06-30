@@ -5,6 +5,7 @@ class CustomUser(AbstractUser):
     is_buyer = models.BooleanField(default=False, null=False, blank=False)
     is_seller = models.BooleanField(default=False, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
     groups = models.ManyToManyField(
         Group,
         related_name='customuser_set',
@@ -19,6 +20,8 @@ class CustomUser(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
     def __str__(self):
@@ -40,6 +43,8 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     primary = models.BooleanField(default=False, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.street_address}"
@@ -47,8 +52,9 @@ class Address(models.Model):
 
 class BuyerProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='buyer_profile')
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.user.username
 
@@ -58,6 +64,12 @@ class SellerProfile(models.Model):
     store_name = models.CharField(max_length=255)
     store_description = models.TextField(null=True, blank=True)
     store_address = models.TextField(null=True, blank=True)
+    approved = models.BooleanField(default=False)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.store_name

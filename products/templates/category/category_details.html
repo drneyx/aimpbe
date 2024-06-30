@@ -1,0 +1,418 @@
+{% extends 'main/main.html' %} {% load static %} {% block content %}
+
+<main class="content">
+  <div class="container-fluid p-0">
+    <h4 class="py-3 mb-4">
+      <span class="text-muted fw-light">Intelligent Marketing /</span>
+      Category Details
+    </h4>
+
+    <div class="row">
+        <div class="col-12 bg-transparent">
+            <div class="row">
+                <div class="col-8">
+                    <div class="card mb-4">
+                        <div class="card-widget-separator-wrapper">
+                            <div class="card-body card-widget-separator">
+                                <div class="d-flex justify-content-center align-items-center card-widget-1 border-end pb-3 pb-sm-0">
+                                    <div class="row w-100">
+                                        <div class="col-md-12">
+                                            <table class="table ">
+                                                <thead>
+                                                  <tr>
+                                                    <th scope="col">More Details</th>
+                                                    <th scope="col"></th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr>
+                                                    <td>Name</td>
+                                                    <td>{{category.name}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Category Parent</td>
+                                                    <td>{{category.parent}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Category Slug</td>
+                                                    <td>{{category.slug}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Status </td>
+                                                    <td>{{category.status}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Created At</td>
+                                                    <td>{{category.created_at}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Updated At</td>
+                                                    <td>{{category.updated_at}}</td>
+                                                  </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card mb-4">
+                        <div class="card-widget-separator-wrapper">
+                            <div class="card-body card-widget-separator">
+                                <div class="d-flex justify-content-center align-items-center card-widget-1 border-end pb-3 pb-sm-0">
+                                    <div class="row w-100">
+                                        <div class="col-md-12">
+                                            <table class="table ">
+                                                <thead>
+                                                  <tr>
+                                                    <th scope="col">Categry Overview</th>
+                                                    <th scope="col"></th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr>
+                                                    <td>Name</td>
+                                                    <td>@mdo</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Category Parent</td>
+                                                    <td>@fat</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Category Slug</td>
+                                                    <td>@fat</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Status </td>
+                                                    <td>@fat</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Created At</td>
+                                                    <td>@fat</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>Updated At</td>
+                                                    <td>@fat</td>
+                                                  </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+
+            <!-- Product List Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">LIST OF PRODUCTS RELATED TO THIS CATEGORY</h3>
+                </div>
+                <div class="card-datatable">
+                    <table id="productTable" class="display " style="width:100%">
+                      <thead class="border light-gray-bg black-color">
+                        <tr class="border">
+                          <th class="align-middle text-center"><input class="select-checkbox" type="checkbox" id="select-all"></th>
+                          <th>Image</th>
+                          <th>Name</th>
+                          <th>Status</th>
+                          <th>Creation date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for products in category.sproducts.all %}
+                        <tr>
+                          <td class="text-center"><input  type="checkbox" ></td>
+                          <td>
+                            {% if product.image %}
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %}
+                                No Image
+                            {% endif %}
+                          </td>
+                          <td>{{product.name}}</td>
+                          <td>{{product.status}}</td>
+                          <td>{{product.created_at}}</td>
+                          <td>
+                            <button class="btn btn-primary btn-sm primary-background border-0 edit-category" 
+                                    data-id="{{ category.id }}" 
+                                    data-name="{{ category.name }}" 
+                                    data-description="{{ category.description }}" 
+                                    data-parent="{{ category.parent_id }}" 
+                                    data-status="{{ category.status }}" 
+                                    data-image="{% if category.image %}{{ category.image.url }}{% endif %}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger delete-category btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            <a class="btn btn-primary primary-background view-sinfo border-0 btn-sm " href="{% url 'category-details' category.id %}"
+                                    data-info='{
+                                        "first_name": "{{ customer.first_name|escapejs }}",
+                                        "last_name": "{{ customer.last_name|escapejs }}",
+                                        "email": "{{ customer.email|escapejs }}",
+                                        "date_joined": "{{ customer.date_joined|escapejs }}",
+                                        "status": "active"
+                                    }'>
+                                <i class="fas fa-eye"></i>
+                            </a>
+                          </td>
+                        </tr>
+                       {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+            </div>
+        </div>
+     
+    </div>
+  </div>
+</main>
+
+{% include 'main/datatable.html' %}
+<script>
+  $(document).ready(function () {
+    var table = $("#productTable").DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      lengthChange: true,
+      pageLength: 10,
+      lengthMenu: [
+        [10, 20, 50, -1],
+        [10, 20, 50, "All"],
+      ], // Add this line to enable length menu
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csv",
+          text: "CSV",
+          className: "d-none",
+        },
+        {
+          extend: "excel",
+          text: "Excel",
+          className: "d-none",
+        },
+        {
+          extend: "pdf",
+          text: "PDF",
+          className: "d-none",
+        },
+        {
+          extend: "print",
+          text: "Print",
+          className: "d-none",
+        },
+      ],
+      columnDefs: [
+        { orderable: false, targets: 5 }, // Disable ordering on the Actions column
+      ],
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search products",
+      },
+    });
+
+    $("#searchName").on("keyup", function () {
+      table.columns(1).search(this.value).draw();
+    });
+
+    $("#searchCategory").on("change", function () {
+      table.columns(2).search(this.value).draw();
+    });
+
+    $("#searchStatus").on("change", function () {
+      table.columns(4).search(this.value).draw();
+    });
+
+    $("#searchPrice").on("change", function () {
+      var priceRange = this.value;
+      if (priceRange === "<$200") {
+        table.columns(3).search("^\\$[0-1]?[0-9]{1,2}$", true, false).draw();
+      } else if (priceRange === "<$300") {
+        table.columns(3).search("^\\$[0-2]?[0-9]{1,2}$", true, false).draw();
+      } else if (priceRange === ">$300") {
+        table.columns(3).search("^\\$[3-9][0-9]{2,}$", true, false).draw();
+      } else {
+        table.columns(3).search("", true, false).draw();
+      }
+    });
+
+    $("#select-all").on("click", function () {
+      var rows = table.rows({ search: "applied" }).nodes();
+      $('input[type="checkbox"]', rows).prop("checked", this.checked);
+      if (this.checked) {
+        table.rows({ search: "applied" }).select();
+      } else {
+        table.rows({ search: "applied" }).deselect();
+      }
+    });
+
+    $("#productTable tbody").on(
+      "change",
+      'input[type="checkbox"]',
+      function () {
+        if (!this.checked) {
+          var el = $("#select-all").get(0);
+          if (el && el.checked && "indeterminate" in el) {
+            el.indeterminate = true;
+          }
+          table.row($(this).closest("tr")).deselect();
+        } else {
+          table.row($(this).closest("tr")).select();
+        }
+      }
+    );
+
+    $("#deleteSelected").on("click", function () {
+      table.rows(".selected").remove().draw();
+    });
+
+    $("#exportCsv").on("click", function () {
+      table.button(".buttons-csv").trigger();
+    });
+
+    $("#exportExcel").on("click", function () {
+      table.button(".buttons-excel").trigger();
+    });
+
+    $("#exportPdf").on("click", function () {
+      table.button(".buttons-pdf").trigger();
+    });
+
+    $("#exportPrint").on("click", function () {
+      table.button(".buttons-print").trigger();
+    });
+
+    $("#addNew").on("click", function () {
+      $("#addCategoryModal").modal("show");
+    });
+
+    var statusField = $("#status");
+
+    function showEditModal(category) {
+      $("#addCategoryModalLabel").text("Edit Category");
+      $("#category_id").val(category.id);
+      $("#categoryName").val(category.name);
+      $("#categoryDescription").val(category.description);
+      $("#categoryParent").val(category.parent);
+      $("#status").val(category.status);
+
+      if (category.image) {
+        $("#categoryImagePreview").attr("src", category.image).show();
+      } else {
+        $("#categoryImagePreview").hide();
+      }
+
+      $("#addCategoryModal").modal("show");
+    }
+
+    // delete confirmation
+    $(".delete-category").on("click", function () {
+      // console.log('DELETING');
+      $("#deleteCategory").modal("show");
+    });
+
+    $(".view-info").on("click", function () {
+      var customerInfo = $(this).attr("data-info");
+      var customer = JSON.parse(customerInfo.replace(/'/g, '"'));
+
+      $("#first_name").text(customer.first_name);
+      $("#last_name").text(customer.last_name);
+      $("#email").text(customer.email);
+      $("#phone").text(customer.first_name);
+
+      $("#viewCategory").modal("show");
+    });
+
+    // Click event for the edit button
+    $(".edit-category").on("click", function () {
+      const category = {
+        id: $(this).data("id"),
+        name: $(this).data("name"),
+        description: $(this).data("description"),
+        parent: $(this).data("parent"),
+        status: $(this).data("status"),
+        image: $(this).data("image"),
+      };
+      showEditModal(category);
+    });
+
+    $('#addCategoryForm button[type="submit"]').on("click", function () {
+      var actionType = $(this).attr("name");
+      if (actionType === "save_draft") {
+        statusField.val("DRAFT");
+      } else if (actionType === "save_changes") {
+        statusField.val("PUBLISHED");
+      }
+    });
+
+    $("#addCategoryForm").on("submit", function (e) {
+      e.preventDefault();
+
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: "POST",
+        url: '{% url "category-list" %}',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.status === "success") {
+            $("#addCategoryModal").modal("hide");
+            $("#addCategoryForm")[0].reset();
+            location.reload();
+          } else {
+            showAlert("An error occurred: " + response.errors, "danger");
+          }
+        },
+        error: function (xhr, status, error) {
+          showAlert("An error occurred. Please try again.", "danger");
+        },
+      });
+    });
+
+    function showAlert(message, type) {
+      var alertBox =
+        '<div class="alert alert-' +
+        type +
+        ' alert-dismissible fade show" role="alert">' +
+        message +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+      $("body").prepend(alertBox);
+      setTimeout(function () {
+        $(".alert").alert("close");
+      }, 3000);
+    }
+
+    //   $('.edit-category').on('click', function() {
+    //     var categoryId = $(this).data('id');
+
+    //     // Fetch category details via AJAX
+    //     $.ajax({
+    //         type: 'GET',
+    //         url: '/categories/?id=' + categoryId,
+    //         success: function(response) {
+    //             console.log('HII response')
+    //             console.log(response)
+    //             if (response.status === 'success') {
+    //                 showEditModal(response.category);
+    //             } else {
+    //                 showAlert('Unable to fetch category details.', 'danger');
+    //             }
+    //         },
+    //         error: function(xhr, status, error) {
+    //             showAlert('An error occurred. Please try again.', 'danger');
+    //         }
+    //     });
+    // });
+  });
+</script>
+{% endblock content %}

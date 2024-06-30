@@ -1,0 +1,14 @@
+.error {
+    border-color: red;
+}
+.error-message {
+    color: red;
+    font-size: 0.875em;
+}
+.modal-dialog {
+    max-width: 400px;
+}
+.custom-modal-dialog {
+    max-width: 600px; /* Adjust the maximum width as needed */
+    margin: 1.75rem auto; /* Center modal vertically and horizontally */
+}

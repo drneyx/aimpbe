@@ -1,0 +1,213 @@
+{% extends 'users/main.html' %}
+{% block content %}
+<main class="d-flex w-100">
+    <div class="container d-flex flex-column">
+        <div class="row vh-100">
+            <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
+                <div class="d-table-cell align-middle">
+                    <div class="card">
+                        <div class="text-center mt-4">
+                            <h1 class="h2">Get started</h1>
+                            <p class="lead">
+                                Start creating the best possible user experience for you customers.
+                            </p>
+                        </div>
+                        <div class="card-body">
+                            <div class="m-sm-3">
+                                <form id="registration-form" method="POST"  novalidate>
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">First Name</label>
+                                                <input class="form-control form-control-lg" type="text" name="fname" placeholder="Enter first name" required />
+                                                <div class="error-message" id="fname-error"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Last Name</label>
+                                                <input class="form-control form-control-lg" type="text" name="lname" placeholder="Enter last name" required />
+                                                <div class="error-message" id="lname-error"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter email" required />
+                                                <div class="error-message" id="email-error"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Phone Number</label>
+                                                <input class="form-control form-control-lg" type="tel" name="phoneno" placeholder="Format: 123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
+                                                <div class="error-message" id="phoneno-error"></div>
+                                                <!-- <small class="form-text text-muted">Format: 123-456-7890</small> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Store Name</label>
+                                        <input class="form-control form-control-lg" type="text" name="store_name" placeholder="Enter store name" required />
+                                        <div class="error-message" id="store_name-error"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input class="form-control form-control-lg" type="password" name="password1" placeholder="Enter password" minlength="8" required />
+                                        <div class="error-message" id="password1-error"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input class="form-control form-control-lg" type="password" name="password2" placeholder="Confirm password" minlength="8" required />
+                                        <div class="error-message" id="password2-error"></div>
+                                    </div>
+                                    <div class="d-grid gap-2 mt-3">
+                                        <button type="submit" class="btn btn-lg btn-primary">Sign up</button>
+                                    </div>
+                                </form>
+                                <div id="message"></div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            Already have account? <a href="{% url 'login' %}">Log In</a>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="registrationSuccessModal" tabindex="-1" aria-labelledby="registrationSuccessModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered"> <!-- Apply custom-modal-dialog class -->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="registrationSuccessModalLabel">Registration Successful</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="modal-message"></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+        $(document).on('submit', '#registration-form',function(e){
+            e.preventDefault();
+            
+            let isValid = true;
+            $('.error-message').text('');
+            $('input').removeClass('error');
+
+            // Validate First Name
+            if ($('input[name="fname"]').val().trim() === '') {
+                $('#fname-error').text('First Name is required.');
+                console.log('First name error');
+                $('input[name="fname"]').addClass('error');
+                isValid = false;
+            }
+
+            // Validate Last Name
+            if ($('input[name="lname"]').val().trim() === '') {
+                $('#lname-error').text('Last Name is required.');
+                $('input[name="lname"]').addClass('error');
+                isValid = false;
+            }
+
+            // Validate Email
+            let email = $('input[name="email"]').val().trim();
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === '') {
+                $('#email-error').text('Email is required.');
+                $('input[name="email"]').addClass('error');
+                isValid = false;
+            } else if (!emailPattern.test(email)) {
+                $('#email-error').text('Invalid email format.');
+                $('input[name="email"]').addClass('error');
+                isValid = false;
+            }
+
+            let phoneno = $('input[name="phoneno"]').val().trim();
+            let phonePattern = /^0[0-9]{9}$/;
+            if (phoneno === '') {
+                $('#phoneno-error').text('Phone Number is required.');
+                $('input[name="phoneno"]').addClass('error');
+                isValid = false;
+            } else if (!phonePattern.test(phoneno)) {
+                $('#phoneno-error').text('Invalid phone number format. Use 0712345678.');
+                $('input[name="phoneno"]').addClass('error');
+                isValid = false;
+            }
+
+            // Validate Store Name
+            if ($('input[name="store_name"]').val().trim() === '') {
+                $('#store_name-error').text('Store Name is required.');
+                $('input[name="store_name"]').addClass('error');
+                isValid = false;
+            }
+
+            // Validate Passwords
+            let password = $('input[name="password1"]').val().trim();
+            let confirmpassword = $('input[name="password2"]').val().trim();
+            if (password === '') {
+                $('#password1-error').text('Password is required.');
+                $('input[name="password1"]').addClass('error');
+                isValid = false;
+            } else if (password.length < 8) {
+                $('#password1-error').text('Password must be at least 8 characters long.');
+                $('input[name="password1"]').addClass('error');
+                isValid = false;
+            }
+            if (confirmpassword === '') {
+                $('#password2-error').text('Confirm Password is required.');
+                $('input[name="password2"]').addClass('error');
+                isValid = false;
+            } else if (confirmpassword !== password) {
+                $('#password2-error').text('Passwords do not match.');
+                $('input[name="password2"]').addClass('error');
+                isValid = false;
+            }
+
+            if (isValid) {
+                console.log(isValid);
+                console.log('This form is valid')
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'register' %}",  // Make sure the URL matches your URL configuration
+                    data: $(this).serialize(),
+                    success: function(response){
+                            $('#registration-form')[0].reset();
+                            $('#modal-message').text('Registration successful! Please wait for your credentials to approved then you can log in.');
+                            $('#registrationSuccessModal').modal('show');
+                            // Optionally redirect to login page after a delay
+                            setTimeout(function() {
+                                window.location.href = "{% url 'login' %}";
+                            }, 4000);  // Redirect after 3 seconds (adjust as needed)
+                    },
+                    error: function(response){
+                        if (response.status === 400) {
+                            let errors = response.responseJSON.errors;
+                            console.log(errors)
+                            for (let field in errors) {
+                                $(`input[name="${field}"]`).addClass('error');
+                                $(`#${field}-error`).text(errors[field]);
+                            }
+                        } else {
+                            $('#message').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                        }
+                    }
+                });
+            }
+        });
+</script>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'users/main.html' %}
+{% block content %}
+	<main class="d-flex w-100">
+		<div class="container d-flex flex-column">
+			<div class="row vh-100">
+				<div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
+					<div class="d-table-cell align-middle">
+						<div class="card">
+                            <div class="text-center mt-4">
+                                <h1 class="h2">Welcome to AIMP!</h1>
+                                <p class="lead">
+                                    Sign in to your account to continue
+                                </p>
+                            </div>
+
+							<div class="card-body">
+								<div class="m-sm-3">
+									 <form id="login-form">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Enter your email">
+                                            <div id="email-error" class="error"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" class="form-control" name="password" placeholder="Enter your password">
+                                            <div id="password-error" class="error"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check align-items-center">
+                                                <input id="remember-me" type="checkbox" class="form-check-input" value="remember-me" name="remember-me" checked>
+                                                <label class="form-check-label text-small" for="remember-me">Remember me</label>
+                                            </div>
+                                        </div>
+                                        <div class="d-grid gap-2 mt-3">
+                                            <button type="button" id="submit-btn" class="btn btn-lg btn-primary">Sign in</button>
+                                        </div>
+                                    </form>
+								</div>
+							</div>
+                            <div class="text-center mb-3">
+                                Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+                            </div>
+						</div>
+
+                        <div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
+                            <div class="modal-dialog custom-modal-dialog"> <!-- Apply custom-modal-dialog class -->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="loginSuccessModalLabel">Login Successful</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p id="modal-message">Redirecting...</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+    <script>
+        $(document).ready(function() {
+            $('#submit-btn').click(function() {
+                let isValid = true;
+                $('input').removeClass('is-invalid');
+                $('.error').text('');
+
+                // Basic validation (you can expand this as per your requirements)
+                $('input[type="email"], input[type="password"]').each(function() {
+                    if ($(this).val().trim() === '') {
+                        let fieldName = $(this).attr('name');
+                        $(this).addClass('is-invalid');
+                        $(`#${fieldName}-error`).text(`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required.`);
+                        isValid = false;
+                    }
+                });
+
+                // AJAX form submission if valid
+                if (isValid) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'login' %}",  // Ensure this matches your URL configuration
+                        data: $('#login-form').serialize(),
+                        success: function(response) {
+                            $('#login-form')[0].reset();
+                            $('#modal-message').text('Login successful! Redirecting...');
+                            $('#loginSuccessModal').modal('show');
+                            setTimeout(function() {
+                                window.location.href = "{% url 'dashboard' %}";
+                            }, 3000);
+                        },
+                        error: function(response) {
+                            if (response.status === 400) {
+                                let errors = response.responseJSON.errors;
+                                for (let field in errors) {
+                                    $(`input[name="${field}"]`).addClass('error');
+                                    $(`#${field}-error`).text(errors[field]);
+                                }
+                            } else {
+                                $('#modal-message').text('An error occurred. Please try again.');
+                                $('#loginSuccessModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
