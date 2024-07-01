@@ -10,7 +10,7 @@ class Region(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'Region {self.id} - {self.name}'
+        return f'Region - {self.name}'
 
 class District(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')

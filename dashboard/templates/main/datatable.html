@@ -18,4 +18,100 @@
  <!-- DataTables Select JS -->
  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
 
+ <script>
+    $(document).ready(function() {
+    //   $('.select2').select2();
+        var table = $('#productTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            lengthChange: true,
+            pageLength: 10,
+            lengthMenu: [ [10, 20, 50, -1], [10, 20, 50, "All"] ], // Add this line to enable length menu
+            dom: 'Bfrtip',
+            buttons: [
+            {
+                extend: 'csv',
+                text: 'CSV',
+                className: 'd-none'
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                className: 'd-none'
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                className: 'd-none'
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                className: 'd-none'
+            }
+            ],
+            columnDefs: [
+            { orderable: false, targets: 5 } // Disable ordering on the Actions column
+            ],
+            language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search products"
+            }
+        });
+
+        $('#select-all').on('click', function() {
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            if (this.checked) {
+            table.rows({ 'search': 'applied' }).select();
+            } else {
+            table.rows({ 'search': 'applied' }).deselect();
+            }
+        });
+
+        $('#productTable tbody').on('change', 'input[type="checkbox"]', function() {
+            if (!this.checked) {
+            var el = $('#select-all').get(0);
+            if (el && el.checked && ('indeterminate' in el)) {
+                el.indeterminate = true;
+            }
+            table.row($(this).closest('tr')).deselect();
+            } else {
+            table.row($(this).closest('tr')).select();
+            }
+        });
+
+        $('#deleteSelected').on('click', function() {
+            table.rows('.selected').remove().draw();
+        });
+
+        $('#exportCsv').on('click', function() {
+            table.button('.buttons-csv').trigger();
+        });
+
+        $('#exportExcel').on('click', function() {
+            table.button('.buttons-excel').trigger();
+        });
+
+        $('#exportPdf').on('click', function() {
+            table.button('.buttons-pdf').trigger();
+        });
+
+        $('#exportPrint').on('click', function() {
+            table.button('.buttons-print').trigger();
+        });
+
+      function showAlert(message, type) {
+        var alertBox = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+          message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        $('body').prepend(alertBox);
+        setTimeout(function() {
+          $('.alert').alert('close');
+        }, 3000);
+      }
+    });
+   
+  </script>
+
  {% endblock datatable %}
