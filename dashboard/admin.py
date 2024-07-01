@@ -10,7 +10,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 
 @admin.register(District)
-class RegionAdmin(admin.ModelAdmin):
+class DistrictAdmin(admin.ModelAdmin):
     list_display = ('name', 'region', 'created_at',)
     search_fields = ('name',)
     list_filter = ('name',)

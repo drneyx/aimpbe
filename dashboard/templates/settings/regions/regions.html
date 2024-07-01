@@ -18,13 +18,18 @@
                         <h3 class="card-title">List of All Regions</h3>
                     </div>
                     <div class="card-datatable">
+                        <div class="row m-2">
+                            <div class="col-md-12 mt-5" >
+                                <button id="addNew" class="btn btn-secondary primary-background border-0">Add Regions</button>
+                                <button id="deleteSelected" class="btn btn-danger ms-2">Delete</button>
+                            </div>
+                        </div>
+                      
                         <table id="productTable" class="display " style="width:100%">
                           <thead class="border light-gray-bg black-color">
                             <tr class="border">
                               <th class="align-middle text-center"><input class="select-checkbox" type="checkbox" id="select-all"></th>
-                              <th>Image</th>
                               <th>Name</th>
-                              <th>Status</th>
                               <th>Creation date</th>
                               <th>Actions</th>
                             </tr>
@@ -124,7 +129,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '{% url "products" %}',
+                url: '{% url "regions" %}',
                 data: formData,
                 processData: false,
                 contentType: false,

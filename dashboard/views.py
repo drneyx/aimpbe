@@ -32,7 +32,7 @@ class RegionView(View):
         regions = Region.objects.all()
         form = RegionForm()
     
-        context['region'] = regions
+        context['regions'] = regions
         context['form'] = form
        
         return render(request, 'settings/regions/regions.html', context)
@@ -48,9 +48,35 @@ class RegionView(View):
         else:
             messages.error(request, 'Error adding region.')
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        
+    
+    def put(self, request):
+        try:
+            data = json.loads(request.body)
+            region_id = data.get('id')
+            region_data = data.get('region')
+
+            if not region_id or not region_data:
+                return JsonResponse({'status': 'error', 'message': 'ID and region data are required.'}, status=400)
+
+            try:
+                region = Region.objects.get(id=region_id)
+            except Region.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Region not found.'}, status=404)
+
+            form = RegionForm(region_data, instance=region)
+
+            if form.is_valid():
+                form.save()
+                return JsonResponse({'status': 'success', 'message': 'Region updated successfully.'}, status=200)
+            else:
+                return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     
 
-    @method_decorator(csrf_exempt)
     def delete(self, request):
         try:
             data = json.loads(request.body)
@@ -80,20 +106,24 @@ class DistrictView(View):
     def get(self, request):
         context = {}
 
+        districts = District.objects.all()
+        form = DistrictForm()
+
         regions = Region.objects.all()
-        form = RegionForm()
     
-        context['region'] = regions
+        context['regions'] = regions
+        context['districts'] = districts
         context['form'] = form
        
-        return render(request, 'settings/regions/regions.html', context)
+        return render(request, 'settings/district/district.html', context)
+
 
     def post(self, request):
-        form = RegionForm(request.POST, request.FILES)
+        form = DistrictForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Region added successfully.')
+            messages.success(request, 'District added successfully.')
             return JsonResponse({'status': 'success'}, status=200)
 
         else:
@@ -119,7 +149,7 @@ class DistrictView(View):
             if deleted_count > 0:
                 return JsonResponse({'status': 'success', 'deleted_count': deleted_count}, status=200)
             else:
-                return JsonResponse({'status': 'error', 'message': 'No regions found to delete.'}, status=404)
+                return JsonResponse({'status': 'error', 'message': 'No district found to delete.'}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON.'}, status=400)
         except Exception as e:
