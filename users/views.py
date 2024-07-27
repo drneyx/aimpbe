@@ -17,7 +17,9 @@ from .serializers import *
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from .serializers import LoginSerializer, UserSerializer
 
 class BuyerRegisterAPIView(APIView):
     """
@@ -42,6 +44,42 @@ class BuyerRegisterAPIView(APIView):
                 "data": serializer.data
                 }
             return Response(response, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class BuyerLoginAPIView(APIView):
+    """
+    Authenticate a buyer and return an authentication token and user data
+    """
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+            
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                token, created = Token.objects.get_or_create(user=user)
+                
+                user_serializer = UserSerializer(user)
+                
+                response = {
+                    "status": status.HTTP_200_OK,
+                    "message": "Login successful",
+                    "token": token.key,
+                    "user": user_serializer.data
+                }
+                return Response(response, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {"error": "Invalid email or password"}, 
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 

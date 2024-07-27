@@ -50,3 +50,19 @@ class RegisterSerializer(serializers.ModelSerializer):
         BuyerProfile.objects.create(user=user)
 
         return user
+    
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'username', 'email', 'phone_number')  
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if not data.get('username') or not data.get('password'):
+            raise serializers.ValidationError("Email and password are required")
+        return data
