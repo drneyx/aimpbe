@@ -137,6 +137,10 @@
                               <th class="align-middle text-center"><input class="select-checkbox" type="checkbox" id="select-all"></th>
                               <th>Image</th>
                               <th>Name</th>
+                              <th>Category</th>
+                              <th>Price</th>
+                              <th>Qty</th>
+                              <th>Stock Status</th>
                               <th>Status</th>
                               <th>Creation date</th>
                               <th>Actions</th>
@@ -147,15 +151,19 @@
                             <tr>
                               <td class="text-center"><input  type="checkbox" ></td>
                               <td>
-                                {% if Product.image %}
-                                    <img src="{{ Product.image.url }}" alt="{{ Product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
                                 {% else %}
                                     No Image
                                 {% endif %}
                               </td>
-                              <td>{{Product.name}}</td>
-                              <td>{{Product.status}}</td>
-                              <td>{{Product.created_at}}</td>
+                              <td>{{product.name}}</td>
+                              <td>{{product.category.name}}</td>
+                              <td>{{product.price}}</td>
+                              <td>{{product.stock_quantity}}</td>
+                              <td>{{product.stock_status}}</td>
+                              <td>{{product.status}}</td>
+                              <td>{{product.created_at}}</td>
                               <td>
                                 <button class="btn btn-primary btn-sm primary-background border-0 edit-Product" 
                                         data-id="{{ Product.id }}" 
@@ -190,8 +198,8 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label for="ProductParent" class="form-label">Category</label>
-                                        <select class="form-select select2" id="ProductParent" name="parent">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select class="form-select select2" id="category" name="category">
                                             <option value="">None</option>
                                             {% for category in categories %}
                                             <option value="{{ category.id }}">{{ category.name }}</option>
@@ -208,11 +216,11 @@
                                         <textarea class="form-control" id="ProductDescription" name="description" rows="3"></textarea>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="ProductName" class="form-label">Price</label>
-                                                <input type="number" class="form-control" id="price" name="name" required>
+                                                <input type="number" class="form-control" id="price" name="price" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -223,17 +231,24 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="ProductName" class="form-label">Region</label>
-                                                <input type="text" class="form-control" id="region" name="name" required>
+                                                <label for="ProductParent" class="form-label">Region</label>
+                                                <select class="form-select select2" id="regionSelect" name="region">
+                                                    <option value="">None</option>
+                                                    {% for region in regions %}
+                                                    <option value="{{ region.id }}">{{ region.name }}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="ProductName" class="form-label">District</label>
-                                                <input type="text" class="form-control" id="district" name="name" required>
+                                                <label for="districtSelect" class="form-label">District</label>
+                                                <select class="form-control" id="districtSelect" name="district">
+                                                    <option value="">Select a district</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -261,6 +276,33 @@
 
 {% include 'main/datatable.html'  %}
   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var regionSelect = document.getElementById('regionSelect');
+        var districtSelect = document.getElementById('districtSelect');
+
+        regionSelect.addEventListener('change', function () {
+            var regionId = this.value;
+
+
+            // Clear the current districts
+            districtSelect.innerHTML = '<option value="">Select a district</option>';
+
+            if (regionId) {
+                fetch(`{% url 'fetch-districts' %}?region_id=${regionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(district => {
+                            var option = document.createElement('option');
+                            option.value = district.id;
+                            option.textContent = district.name;
+                            districtSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+            }
+        });
+    });
+
     $(document).ready(function() {
         $('#addNew').on('click', function() {
             $('#addProductModal').modal('show');

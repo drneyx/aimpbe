@@ -111,13 +111,7 @@ class ProductView(View):
     """
 
     def get(self, request):
-        product_id = request.GET.get('id')
         context = {}
-
-        if product_id:
-            product = get_object_or_404(Product, id=product_id)
-            form = CategoryForm(instance=product)
-            context['product'] = product
 
         products = Product.objects.all()
         form = ProductForm()
@@ -127,17 +121,31 @@ class ProductView(View):
 
         categories = Category.objects.all()
         context['categories'] = categories
+
+        regions = Region.objects.all()
+        context['regions'] = regions
        
         return render(request, 'products/products.html', context)
 
     def post(self, request):
-        form = CategoryForm(request.POST, request.FILES)
+        form = ProductForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Category added successfully.')
+            messages.success(request, 'Product added successfully.')
             return JsonResponse({'status': 'success'}, status=200)
 
         else:
             messages.error(request, 'Error adding category.')
+            print(form.errors)
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        
+
+
+class FetchDistrictsView(View):
+    def get(self, request):
+        region_id = request.GET.get('region_id')
+        if region_id:
+            districts = District.objects.filter(region_id=region_id).values('id', 'name')
+            return JsonResponse(list(districts), safe=False)
+        return JsonResponse({'error': 'Region ID not provided'}, status=400)

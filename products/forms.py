@@ -25,7 +25,9 @@ class ProductForm(forms.ModelForm):
             'seller',
             'stock_quantity',
             'price',
-            ''
+            'category',
+            'region',
+            'district',
             'description', 
             'image'
         ]

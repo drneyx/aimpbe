@@ -27,6 +27,9 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+    class Meta:
+        ordering = ['-created_at']
+
 
 class Address(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='addresses')
@@ -48,6 +51,9 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.street_address}"
+    
+    class Meta:
+        ordering = ['-created_at']
 
 
 class BuyerProfile(models.Model):
@@ -57,6 +63,9 @@ class BuyerProfile(models.Model):
     
     def __str__(self):
         return self.user.username
+    
+    class Meta:
+        ordering = ['-created_at']
 
 
 class SellerProfile(models.Model):
@@ -73,3 +82,6 @@ class SellerProfile(models.Model):
 
     def __str__(self):
         return self.store_name
+    
+    class Meta:
+        ordering = ['-created_at']

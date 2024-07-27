@@ -45,7 +45,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     sku = models.CharField(blank=True, null=True)
-    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='orders')
+    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='sproducts', null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)

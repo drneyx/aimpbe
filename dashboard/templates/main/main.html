@@ -117,7 +117,25 @@
 					}
 				}
 			});
+
+
+		var path = window.location.pathname;
+		console.log('ITEMSSS')
+		var sidebarItems = document.querySelectorAll('.sidebar-item');
+
+		sidebarItems.forEach(function (item) {
+			var link = item.querySelector('a');
+
+			
+			if (link && path.includes(link.getAttribute('href'))) {
+				item.classList.add('active');
+			} else {
+				item.classList.remove('active');
+			}
 		});
+		});
+
+	
 	</script>
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {

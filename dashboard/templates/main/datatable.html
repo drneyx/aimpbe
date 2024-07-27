@@ -17,7 +17,27 @@
  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
  <!-- DataTables Select JS -->
  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+ <script>
+    document.addEventListener("DOMContentLoaded", function() {
 
+    var path = window.location.pathname;
+    console.log('ITEMSSS')
+    var sidebarItems = document.querySelectorAll('.sidebar-item');
+
+    sidebarItems.forEach(function (item) {
+        var link = item.querySelector('a');
+
+        
+        if (link && path.includes(link.getAttribute('href'))) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    });
+
+
+</script>
  <script>
     $(document).ready(function() {
     //   $('.select2').select2();

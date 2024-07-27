@@ -2,14 +2,48 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+from products.forms import CategoryForm
+from users.constant import USER_CREATED_SUCCESS
 from .models import *
 from .forms import *
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.contrib import messages
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login
 from django.views import View
+from .serializers import *
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+
+
+class BuyerRegisterAPIView(APIView):
+    """
+    Create a new tax buyer
+    """
+    serializer_class = RegisterSerializer
+
+    @staticmethod
+    def post(request):
+        serializer = RegisterSerializer(
+            data=request.data, 
+            context={
+                'request': request
+                }
+            )
+
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                "status": status.HTTP_201_CREATED, 
+                "message": USER_CREATED_SUCCESS,
+                "data": serializer.data
+                }
+            return Response(response, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class LoginView(TemplateView):
     template_name = 'users/login.html'
@@ -89,7 +123,7 @@ class CustomerView(View):
             # form = CategoryForm(instance=CustomUser)
             context['customer_obj'] = customer
 
-        customers = CustomUser.objects.all()
+        customers = CustomUser.objects.filter(is_buyer=True)
         form = CustomerForm()
     
         context['customers'] = customers
