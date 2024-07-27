@@ -3,11 +3,11 @@ from django.views import View
 from django.contrib import messages
 from django.urls import reverse
 from django.http import JsonResponse
-from .models import *
-from .forms import *
+from ..forms import *
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
+from django.db.models import Q
 
 class CategoryView(View):
     def get(self, request):

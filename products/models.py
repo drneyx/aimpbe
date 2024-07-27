@@ -61,6 +61,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
+    image_cdn = models.CharField(blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
 
     class Meta:

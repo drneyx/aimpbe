@@ -29,7 +29,8 @@ class ProductForm(forms.ModelForm):
             'region',
             'district',
             'description', 
-            'image'
+            'image',
+            'image_cdn'
         ]
 
 class DeleteCategoryForm(forms.Form):
